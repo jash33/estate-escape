@@ -4,12 +4,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      # Persist HCAD data between runs (optional, speeds up restarts)
+      # Source code (enables HMR)
+      - ./app/src:/app/app/src
+      - ./scripts:/app/scripts
+      # Persist HCAD data between runs
       - hcad-data:/app/scripts/data
-      # Persist output leads
-      - ./scripts/output:/app/scripts/output
+      # Exclude node_modules and venv (use container's)
+      - /app/app/node_modules
+      - /app/scripts/venv
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PYTHONUNBUFFERED=1
 
 volumes:
