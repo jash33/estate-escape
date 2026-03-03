@@ -118,16 +118,20 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
     return <span className="ml-1">{sortDir === 'desc' ? '↓' : '↑'}</span>
   }
 
-  const InfoIcon = ({ tooltip }: { tooltip: string }) => (
+  const InfoIcon = ({ tooltip, position = 'center' }: { tooltip: string; position?: 'center' | 'left' }) => (
     <span className="group relative ml-1.5 inline-flex">
       <span className="inline-flex cursor-help rounded-full bg-[var(--lagoon)]/10 p-0.5 text-[var(--lagoon)] hover:bg-[var(--lagoon)]/20">
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </span>
-      <span className="pointer-events-none absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-normal normal-case tracking-normal text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+      <span className={`pointer-events-none absolute top-full z-50 mt-2 w-48 rounded-lg bg-gray-900 px-3 py-2 text-xs font-normal normal-case tracking-normal text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 ${
+        position === 'left' ? 'right-0' : 'left-1/2 -translate-x-1/2'
+      }`}>
         {tooltip}
-        <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-gray-900" />
+        <span className={`absolute -top-1 h-2 w-2 rotate-45 bg-gray-900 ${
+          position === 'left' ? 'right-2' : 'left-1/2 -translate-x-1/2'
+        }`} />
       </span>
     </span>
   )
@@ -206,12 +210,12 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                 onClick={() => handleSort('best_match_score')}
               >
                 Match %
-                <InfoIcon tooltip="Fuzzy name match score: 100% = exact match, 85%+ = likely match" />
+                <InfoIcon tooltip="Fuzzy name match score: 100% = exact match, 85%+ = likely match" position="left" />
                 <SortIcon field="best_match_score" />
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Status
-                <InfoIcon tooltip="Court case status: Open = active, Closed = resolved, Pending = awaiting action" />
+                <InfoIcon tooltip="Court case status: Open = active, Closed = resolved, Pending = awaiting action" position="left" />
               </th>
             </tr>
           </thead>
