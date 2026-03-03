@@ -123,7 +123,7 @@ class EntityMatcher:
                 matches.append(PropertyMatch(
                     account_number=record.get('account_number', ''),
                     owner_name=record.get('owner_name', ''),
-                    site_address=record.get('site_addr', ''),
+                    site_address=record.get('site_address', ''),
                     market_value=record.get('market_value'),
                     match_score=int(score),
                     match_type=match_type,
@@ -204,7 +204,7 @@ class EntityMatcher:
                     match = PropertyMatch(
                         account_number=record.get('account_number', ''),
                         owner_name=record.get('owner_name', ''),
-                        site_address=record.get('site_addr', ''),
+                        site_address=record.get('site_address', ''),
                         market_value=record.get('market_value'),
                         match_score=int(score),
                         match_type=match_type,
