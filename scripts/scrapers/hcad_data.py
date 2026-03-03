@@ -127,11 +127,15 @@ class HCADDataLoader:
             return
             
         print("Loading owner names...")
+        count = 0
         with open(owners_file, 'r', encoding='latin-1', errors='ignore') as f:
             # Skip header: acct, ln_num, name, aka, pct_own
             next(f, None)
             
             for line in f:
+                count += 1
+                if count % 300000 == 0:
+                    print(f"  Loaded {count:,} records...")
                 fields = line.strip().split('\t')
                 if len(fields) >= 3:
                     acct = fields[0].strip()
