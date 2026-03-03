@@ -120,11 +120,11 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
 
   const InfoIcon = ({ tooltip }: { tooltip: string }) => (
     <span 
-      className="ml-1 inline-flex cursor-help text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+      className="ml-1.5 inline-flex cursor-help rounded-full bg-[var(--lagoon)]/10 p-0.5 text-[var(--lagoon)] hover:bg-[var(--lagoon)]/20"
       title={tooltip}
     >
-      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     </span>
   )
