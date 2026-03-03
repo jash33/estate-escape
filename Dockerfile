@@ -3,11 +3,27 @@
 
 FROM node:22-slim AS base
 
-# Install Python and dependencies
+# Install Python and Playwright system dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    # Playwright dependencies
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libdbus-1-3 \
+    libxkbcommon0 \
+    libatspi2.0-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -19,7 +35,8 @@ COPY scripts/requirements.txt /app/scripts/
 WORKDIR /app/scripts
 
 RUN python3 -m venv venv && \
-    ./venv/bin/pip install --no-cache-dir -r requirements.txt
+    ./venv/bin/pip install --no-cache-dir -r requirements.txt && \
+    ./venv/bin/playwright install chromium
 
 # ---------- Node setup ----------
 FROM base AS node-deps
@@ -34,6 +51,9 @@ FROM base AS runner
 
 # Copy Python venv
 COPY --from=python-deps /app/scripts/venv /app/scripts/venv
+
+# Copy Playwright browsers
+COPY --from=python-deps /root/.cache/ms-playwright /root/.cache/ms-playwright
 
 # Copy Node modules
 COPY --from=node-deps /app/app/node_modules /app/app/node_modules
