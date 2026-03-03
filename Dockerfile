@@ -3,9 +3,9 @@
 
 FROM mcr.microsoft.com/playwright/python:v1.49.0-noble
 
-# Install Node.js 22
+# Install Node.js 22 and python3-venv
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y nodejs python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
