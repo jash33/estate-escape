@@ -44,5 +44,5 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PYTHONUNBUFFERED=1
 
-# Start the production server
+# build the production server
 CMD ["npm", "run", "build"]
