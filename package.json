@@ -1,0 +1,20 @@
+{
+  "name": "estate-escape",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Probate lead generator for Harris County real estate investors",
+  "scripts": {
+    "dev": "cd app && npm run dev",
+    "build": "cd app && npm run build",
+    "start": "cd app && npm run start",
+    "docker:dev": "docker compose up --build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:rebuild": "docker compose build --no-cache && docker compose up -d",
+    "docker:clean": "docker compose down -v --rmi local"
+  },
+  "keywords": ["probate", "real-estate", "leads", "harris-county"],
+  "author": "Estate Escape Team",
+  "license": "UNLICENSED"
+}
