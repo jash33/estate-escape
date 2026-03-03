@@ -49,6 +49,7 @@ function App() {
     });
 
     eventSource.addEventListener("error", (e) => {
+      // @ts-ignore
       if (e.data) {
         const data = JSON.parse(e.data);
         setError(data.message);
@@ -86,6 +87,9 @@ function App() {
 
           <div className="flex flex-wrap items-start gap-4">
             <div className="flex flex-col gap-1">
+              <span className="text-xs text-[var(--sea-ink-soft)]">
+                Scan may take 1-2 minutes
+              </span>
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="days"
@@ -104,9 +108,6 @@ function App() {
                   className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
                 />
               </div>
-              <span className="text-xs text-[var(--sea-ink-soft)]">
-                Scan may take 1-2 minutes
-              </span>
             </div>
 
             <button
@@ -121,7 +122,7 @@ function App() {
               {isRunning ? (
                 <>
                   <svg
-                    className="-ml-1 mr-3 mb-3 h-5 w-5 animate-spin text-white"
+                    className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -144,7 +145,7 @@ function App() {
               ) : (
                 <>
                   <svg
-                    className="-ml-1 mr-2 h-5 w-5 mb-3"
+                    className="-ml-1 mr-2 h-5 w-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
