@@ -95,7 +95,6 @@ function App() {
                 value={daysBack}
                 onChange={(e) => setDaysBack(e.target.value)}
                 disabled={isRunning}
-                placeholder="7"
                 className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
               />
             </div>
