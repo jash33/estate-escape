@@ -125,12 +125,12 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </span>
-      <span className={`pointer-events-none absolute top-full z-50 mt-2 w-48 rounded-lg bg-gray-900 px-3 py-2 text-xs font-normal normal-case tracking-normal text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 ${
+      <span className={`pointer-events-none absolute top-full z-50 mt-2 w-64 rounded-xl bg-gray-900 px-4 py-3 text-sm font-normal normal-case leading-relaxed tracking-normal text-white opacity-0 shadow-xl transition-opacity group-hover:opacity-100 ${
         position === 'left' ? 'right-0' : 'left-1/2 -translate-x-1/2'
       }`}>
         {tooltip}
-        <span className={`absolute -top-1 h-2 w-2 rotate-45 bg-gray-900 ${
-          position === 'left' ? 'right-2' : 'left-1/2 -translate-x-1/2'
+        <span className={`absolute -top-1.5 h-3 w-3 rotate-45 bg-gray-900 ${
+          position === 'left' ? 'right-3' : 'left-1/2 -translate-x-1/2'
         }`} />
       </span>
     </span>
