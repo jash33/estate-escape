@@ -127,8 +127,8 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       <div className="border-b border-[var(--line)] px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Lead Results</h2>
-            <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
+            <h2 className="text-lg font-semibold text-[#1e3a3a]">Lead Results</h2>
+            <div className="mt-1 flex items-center gap-4 text-sm text-[#3d5a5a]">
               <span>{leadsWithMatches} leads with properties</span>
               <span>•</span>
               <span>Total estimated value: {formatCurrency(totalValue)}</span>
@@ -171,7 +171,10 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               >
                 Filed <SortIcon field="file_date" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
+              <th 
+                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                title="Type of probate case (e.g., Independent Administration, Guardianship)"
+              >
                 Type
               </th>
               <th 
@@ -189,10 +192,14 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               <th 
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('best_match_score')}
+                title="Fuzzy name match score: 100% = exact match, 85%+ = likely match"
               >
                 Match % <SortIcon field="best_match_score" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
+              <th 
+                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                title="Court case status: Open = active, Closed = resolved, Pending = awaiting action"
+              >
                 Status
               </th>
             </tr>
@@ -221,7 +228,10 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                   <td className="whitespace-nowrap px-4 py-3 text-gray-700">
                     {lead.file_date}
                   </td>
-                  <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-700">
+                  <td 
+                    className="max-w-xs truncate px-4 py-3 text-sm text-gray-700"
+                    title={lead.case_type}
+                  >
                     {lead.case_type}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
@@ -238,7 +248,14 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                       {formatCurrency(getTotalValue(lead.properties))}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3">
+                  <td 
+                    className="whitespace-nowrap px-4 py-3"
+                    title={
+                      lead.best_match_score >= 95 ? 'High confidence: name closely matches property owner' :
+                      lead.best_match_score >= 85 ? 'Medium confidence: likely match, verify manually' :
+                      'Low confidence: may be a different person'
+                    }
+                  >
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-16 rounded-full bg-gray-200">
                         <div
@@ -254,11 +271,18 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    <span className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${
-                      lead.status === 'Open' ? 'bg-blue-100 text-blue-800' :
-                      lead.status === 'Closed' ? 'bg-gray-100 text-gray-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span 
+                      className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${
+                        lead.status === 'Open' ? 'bg-blue-100 text-blue-800' :
+                        lead.status === 'Closed' ? 'bg-gray-100 text-gray-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}
+                      title={
+                        lead.status === 'Open' ? 'Case is active - estate being administered' :
+                        lead.status === 'Closed' ? 'Case resolved - estate settled' :
+                        'Case pending court action'
+                      }
+                    >
                       {lead.status}
                     </span>
                   </td>

@@ -155,13 +155,13 @@ pre code {
 }
 
 .page-wrap {
-  width: min(1400px, calc(100% - 2rem));
+  width: min(1200px, calc(100% - 2rem));
   margin-inline: auto;
 }
 
-@media (min-width: 1600px) {
+@media (min-width: 1400px) {
   .page-wrap {
-    width: min(1600px, calc(100% - 4rem));
+    width: min(1320px, calc(100% - 3rem));
   }
 }
 

@@ -73,10 +73,10 @@ function App() {
         
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="display-title mb-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h1 className="display-title mb-2 text-3xl font-bold tracking-tight text-[#1e3a3a] sm:text-4xl">
               🏠 Estate Escape
             </h1>
-            <p className="text-gray-600">
+            <p className="text-[#3d5a5a]">
               Probate Lead Generator for Harris County
             </p>
           </div>
@@ -165,14 +165,14 @@ function App() {
         <section className="island-shell rounded-2xl p-8 text-center">
           <div className="mx-auto max-w-md">
             <div className="mb-4 text-6xl">🏠</div>
-            <h2 className="mb-2 text-xl font-semibold text-gray-900">
+            <h2 className="mb-2 text-xl font-semibold text-[#1e3a3a]">
               Ready to Find Leads
             </h2>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-[#3d5a5a]">
               Click "Run Lead Generator" to scrape recent probate filings from Harris County 
               and match them against HCAD property records.
             </p>
-            <div className="space-y-2 text-left text-sm text-gray-700">
+            <div className="space-y-2 text-left text-sm text-[#2d4a4a]">
               <p>✓ Scrapes probate court records</p>
               <p>✓ Matches decedents to property owners</p>
               <p>✓ Shows estimated property values</p>
