@@ -45,4 +45,4 @@ ENV NODE_ENV=production
 ENV PYTHONUNBUFFERED=1
 
 # Start the production server
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "build"]
