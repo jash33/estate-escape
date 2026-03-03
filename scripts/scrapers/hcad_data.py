@@ -205,12 +205,19 @@ class HCADDataLoader:
             
     def iter_properties(self) -> Generator[dict, None, None]:
         """Iterate over all property records with owner names."""
+        # Auto-download if data files missing
+        acct_file = self.data_dir / "real_acct.txt"
+        owners_file = self.data_dir / "owners.txt"
+        
+        if not acct_file.exists() or not owners_file.exists():
+            print("HCAD data files not found. Downloading (~200MB)...")
+            self.download_all()
+        
         # Load owners first
         self._load_owners()
         
-        acct_file = self.data_dir / "real_acct.txt"
         if not acct_file.exists():
-            raise FileNotFoundError(f"{acct_file} not found. Run --download first.")
+            raise FileNotFoundError(f"{acct_file} not found. Download failed.")
             
         print(f"Reading {acct_file.name}...")
         

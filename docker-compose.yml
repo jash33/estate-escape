@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist HCAD data between runs (optional, speeds up restarts)
+      - hcad-data:/app/scripts/data
+      # Persist output leads
+      - ./scripts/output:/app/scripts/output
+    environment:
+      - NODE_ENV=production
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  hcad-data:

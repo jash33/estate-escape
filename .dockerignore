@@ -1,0 +1,24 @@
+# Dependencies (rebuilt in container)
+node_modules
+app/node_modules
+scripts/venv
+
+# Large data files (downloaded at runtime)
+scripts/data
+
+# Output (mounted as volume)
+scripts/output
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Misc
+*.md
+*.log
+.env*
+.DS_Store
