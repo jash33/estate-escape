@@ -146,17 +146,28 @@ class HarrisProbateScraper:
             
         # Parse results with pagination
         all_cases = []
+        seen_case_numbers = set()
         page_num = 1
+        max_pages = 20  # Safety limit
         
-        while True:
+        while page_num <= max_pages:
             cases = await self._parse_search_results()
-            all_cases.extend(cases)
+            
+            # Check for duplicates (means we've looped)
+            new_cases = [c for c in cases if c.case_number not in seen_case_numbers]
+            if not new_cases and page_num > 1:
+                print(f"No new cases on page {page_num}, stopping pagination")
+                break
+                
+            for c in new_cases:
+                seen_case_numbers.add(c.case_number)
+                all_cases.append(c)
             
             # Check for next page link
             next_link = self.page.locator('a:has-text("Next")')
             has_next = await next_link.count() > 0
             
-            if has_next:
+            if has_next and len(new_cases) > 0:
                 try:
                     page_num += 1
                     print(f"Fetching page {page_num}...")
@@ -164,7 +175,7 @@ class HarrisProbateScraper:
                     await self.page.wait_for_load_state("networkidle")
                     await asyncio.sleep(1)
                 except Exception as e:
-                    print(f"No more pages or pagination error: {e}")
+                    print(f"Pagination error: {e}")
                     break
             else:
                 break
