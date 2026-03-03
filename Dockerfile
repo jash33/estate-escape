@@ -1,64 +1,30 @@
-# Estate Escape - Multi-stage Dockerfile
-# Runs TanStack Start (Node) + Python matcher
+# Estate Escape - Dockerfile
+# Runs TanStack Start (Node) + Python matcher with Playwright
 
-FROM node:22-slim AS base
+FROM mcr.microsoft.com/playwright/python:v1.49.0-noble
 
-# Install Python and Playwright system dependencies
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
-    python3-venv \
-    # Playwright dependencies
-    libnss3 \
-    libnspr4 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libdbus-1-3 \
-    libxkbcommon0 \
-    libatspi2.0-0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxfixes3 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    && rm -rf /var/lib/apt/lists/*
+# Install Node.js 22
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # ---------- Python setup ----------
-FROM base AS python-deps
-
 COPY scripts/requirements.txt /app/scripts/
 WORKDIR /app/scripts
 
 RUN python3 -m venv venv && \
-    ./venv/bin/pip install --no-cache-dir -r requirements.txt && \
-    ./venv/bin/playwright install chromium
+    ./venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # ---------- Node setup ----------
-FROM base AS node-deps
-
 COPY app/package*.json /app/app/
 WORKDIR /app/app
 
 RUN npm ci
 
-# ---------- Final image ----------
-FROM base AS runner
-
-# Copy Python venv
-COPY --from=python-deps /app/scripts/venv /app/scripts/venv
-
-# Copy Playwright browsers
-COPY --from=python-deps /root/.cache/ms-playwright /root/.cache/ms-playwright
-
-# Copy Node modules
-COPY --from=node-deps /app/app/node_modules /app/app/node_modules
-
-# Copy source code
+# ---------- Copy source ----------
+WORKDIR /app
 COPY scripts /app/scripts
 COPY app /app/app
 
