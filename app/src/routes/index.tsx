@@ -73,17 +73,17 @@ function App() {
         
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="display-title mb-2 text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
+            <h1 className="display-title mb-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
               🏠 Estate Escape
             </h1>
-            <p className="text-[var(--sea-ink-soft)]">
+            <p className="text-gray-600">
               Probate Lead Generator for Harris County
             </p>
           </div>
           
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <label htmlFor="days" className="text-sm font-medium text-[var(--sea-ink)]">
+              <label htmlFor="days" className="text-sm font-medium text-gray-700">
                 Days to scan:
               </label>
               <input
@@ -94,7 +94,7 @@ function App() {
                 value={daysBack}
                 onChange={(e) => setDaysBack(Number(e.target.value))}
                 disabled={isRunning}
-                className="w-20 rounded-lg border border-[var(--line)] px-3 py-2 text-sm focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
+                className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
               />
             </div>
             
@@ -165,14 +165,14 @@ function App() {
         <section className="island-shell rounded-2xl p-8 text-center">
           <div className="mx-auto max-w-md">
             <div className="mb-4 text-6xl">🏠</div>
-            <h2 className="mb-2 text-xl font-semibold text-[var(--sea-ink)]">
+            <h2 className="mb-2 text-xl font-semibold text-gray-900">
               Ready to Find Leads
             </h2>
-            <p className="mb-6 text-[var(--sea-ink-soft)]">
+            <p className="mb-6 text-gray-600">
               Click "Run Lead Generator" to scrape recent probate filings from Harris County 
               and match them against HCAD property records.
             </p>
-            <div className="space-y-2 text-left text-sm text-[var(--sea-ink-soft)]">
+            <div className="space-y-2 text-left text-sm text-gray-700">
               <p>✓ Scrapes probate court records</p>
               <p>✓ Matches decedents to property owners</p>
               <p>✓ Shows estimated property values</p>

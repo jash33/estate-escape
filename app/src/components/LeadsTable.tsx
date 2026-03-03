@@ -8,6 +8,8 @@ interface LeadsTableProps {
 type SortField = 'decedent_name' | 'file_date' | 'match_count' | 'best_match_score' | 'total_value'
 type SortDir = 'asc' | 'desc'
 
+const PAGE_SIZE_OPTIONS = [10, 20, 50, 100]
+
 function formatCurrency(value: number | null): string {
   if (value === null || value === 0) return '—'
   return new Intl.NumberFormat('en-US', {
@@ -28,7 +30,7 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
-  const pageSize = 20
+  const [pageSize, setPageSize] = useState(20)
 
   const filteredLeads = useMemo(() => {
     if (!searchQuery.trim()) return leads
@@ -83,7 +85,7 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
   const paginatedLeads = useMemo(() => {
     const start = page * pageSize
     return sortedLeads.slice(start, start + pageSize)
-  }, [sortedLeads, page])
+  }, [sortedLeads, page, pageSize])
 
   const totalPages = Math.ceil(sortedLeads.length / pageSize)
 
@@ -106,6 +108,11 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
     setExpandedRows(newExpanded)
   }
 
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize)
+    setPage(0) // Reset to first page
+  }
+
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return null
     return <span className="ml-1">{sortDir === 'desc' ? '↓' : '↑'}</span>
@@ -120,8 +127,8 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       <div className="border-b border-[var(--line)] px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--sea-ink)]">Lead Results</h2>
-            <div className="mt-1 flex items-center gap-4 text-sm text-[var(--sea-ink-soft)]">
+            <h2 className="text-lg font-semibold text-gray-900">Lead Results</h2>
+            <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
               <span>{leadsWithMatches} leads with properties</span>
               <span>•</span>
               <span>Total estimated value: {formatCurrency(totalValue)}</span>
@@ -134,7 +141,7 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setPage(0) }}
               placeholder="Search leads..."
-              className="rounded-lg border border-[var(--line)] bg-white/50 py-2 pl-10 pr-4 text-sm focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)]"
+              className="rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)]"
             />
             <svg className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -146,46 +153,46 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-[var(--line)]">
-          <thead className="bg-[var(--chip-bg)]">
+          <thead className="bg-gray-50">
             <tr>
               <th className="w-10 px-4 py-3"></th>
               <th 
-                className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('decedent_name')}
               >
                 Decedent <SortIcon field="decedent_name" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Case #
               </th>
               <th 
-                className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('file_date')}
               >
                 Filed <SortIcon field="file_date" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Type
               </th>
               <th 
-                className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('match_count')}
               >
                 Properties <SortIcon field="match_count" />
               </th>
               <th 
-                className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('total_value')}
               >
                 Est. Value <SortIcon field="total_value" />
               </th>
               <th 
-                className="cursor-pointer px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('best_match_score')}
               >
                 Match % <SortIcon field="best_match_score" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--sea-ink-soft)]">
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Status
               </th>
             </tr>
@@ -193,31 +200,32 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
           <tbody className="divide-y divide-[var(--line)] bg-white">
             {paginatedLeads.map((lead) => (
               <>
-                <tr key={lead.case_number} className="hover:bg-[var(--chip-bg)]">
-                  <td className="px-4 py-3">
+                <tr 
+                  key={lead.case_number} 
+                  className={`hover:bg-gray-50 ${lead.properties.length > 0 ? 'cursor-pointer' : ''}`}
+                  onClick={() => lead.properties.length > 0 && toggleExpand(lead.case_number)}
+                >
+                  <td className="px-4 py-3 text-gray-500">
                     {lead.properties.length > 0 && (
-                      <button
-                        onClick={() => toggleExpand(lead.case_number)}
-                        className="rounded p-1 hover:bg-[var(--line)]"
-                      >
+                      <span className="text-sm">
                         {expandedRows.has(lead.case_number) ? '▼' : '▶'}
-                      </button>
+                      </span>
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 font-medium text-[var(--sea-ink)]">
+                  <td className="whitespace-nowrap px-4 py-3 font-medium text-gray-900">
                     {lead.decedent_name}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 font-mono text-sm text-[var(--sea-ink-soft)]">
+                  <td className="whitespace-nowrap px-4 py-3 font-mono text-sm text-gray-700">
                     {lead.case_number}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-[var(--sea-ink-soft)]">
+                  <td className="whitespace-nowrap px-4 py-3 text-gray-700">
                     {lead.file_date}
                   </td>
-                  <td className="max-w-xs truncate px-4 py-3 text-xs text-[var(--sea-ink-soft)]">
+                  <td className="max-w-xs truncate px-4 py-3 text-sm text-gray-700">
                     {lead.case_type}
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                       lead.match_count > 0 
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-gray-100 text-gray-600'
@@ -226,7 +234,7 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                     </span>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    <span className={`font-medium ${getTotalValue(lead.properties) > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                    <span className={`font-semibold ${getTotalValue(lead.properties) > 0 ? 'text-green-700' : 'text-gray-400'}`}>
                       {formatCurrency(getTotalValue(lead.properties))}
                     </span>
                   </td>
@@ -242,11 +250,11 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                           style={{ width: `${lead.best_match_score}%` }}
                         />
                       </div>
-                      <span className="text-sm text-[var(--sea-ink-soft)]">{lead.best_match_score}%</span>
+                      <span className="text-sm font-medium text-gray-700">{lead.best_match_score}%</span>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
-                    <span className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
+                    <span className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${
                       lead.status === 'Open' ? 'bg-blue-100 text-blue-800' :
                       lead.status === 'Closed' ? 'bg-gray-100 text-gray-800' :
                       'bg-yellow-100 text-yellow-800'
@@ -258,25 +266,25 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
                 {/* Expanded row with property details */}
                 {expandedRows.has(lead.case_number) && lead.properties.length > 0 && (
                   <tr key={`${lead.case_number}-expanded`}>
-                    <td colSpan={9} className="bg-[var(--chip-bg)] px-8 py-4">
+                    <td colSpan={9} className="bg-gray-50 px-8 py-4">
                       <div className="text-sm">
-                        <h4 className="mb-2 font-medium text-[var(--sea-ink)]">Matched Properties:</h4>
+                        <h4 className="mb-2 font-semibold text-gray-900">Matched Properties:</h4>
                         <div className="space-y-2">
                           {lead.properties.map((prop, i) => (
                             <div
                               key={i}
-                              className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-white p-3"
+                              className="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3"
                             >
                               <div>
-                                <span className="font-medium text-[var(--sea-ink)]">{prop.owner_name}</span>
-                                <span className="ml-2 text-[var(--sea-ink-soft)]">({prop.match_score}% match)</span>
-                                <div className="text-[var(--sea-ink-soft)]">{prop.site_address}</div>
+                                <span className="font-medium text-gray-900">{prop.owner_name}</span>
+                                <span className="ml-2 text-gray-600">({prop.match_score}% match)</span>
+                                <div className="text-gray-600">{prop.site_address}</div>
                               </div>
                               <div className="text-right">
-                                <div className="font-medium text-green-600">
+                                <div className="font-semibold text-green-700">
                                   {formatCurrency(prop.market_value)}
                                 </div>
-                                <div className="text-xs text-[var(--sea-ink-soft)]">
+                                <div className="text-xs text-gray-500">
                                   Account: {prop.account_number}
                                 </div>
                               </div>
@@ -294,25 +302,40 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between border-t border-[var(--line)] px-6 py-4">
-        <div className="text-sm text-[var(--sea-ink-soft)]">
-          Showing {page * pageSize + 1} to {Math.min((page + 1) * pageSize, sortedLeads.length)} of {sortedLeads.length} results
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] px-6 py-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-700">
+            Showing {page * pageSize + 1} to {Math.min((page + 1) * pageSize, sortedLeads.length)} of {sortedLeads.length}
+          </span>
+          <div className="flex items-center gap-2">
+            <label htmlFor="pageSize" className="text-sm text-gray-700">Per page:</label>
+            <select
+              id="pageSize"
+              value={pageSize}
+              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+              className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)]"
+            >
+              {PAGE_SIZE_OPTIONS.map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="rounded-lg border border-[var(--line)] px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--chip-bg)]"
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
           >
             Previous
           </button>
-          <span className="text-sm text-[var(--sea-ink-soft)]">
+          <span className="text-sm text-gray-700">
             Page {page + 1} of {totalPages || 1}
           </span>
           <button
             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="rounded-lg border border-[var(--line)] px-3 py-1 text-sm disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--chip-bg)]"
+            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
           >
             Next
           </button>
