@@ -15,7 +15,8 @@ COPY scripts/requirements.txt /app/scripts/
 WORKDIR /app/scripts
 
 RUN python3 -m venv venv && \
-    ./venv/bin/pip install --no-cache-dir -r requirements.txt
+    ./venv/bin/pip install --no-cache-dir -r requirements.txt && \
+    ./venv/bin/playwright install chromium
 
 # ---------- Node setup ----------
 COPY app/package*.json /app/app/
