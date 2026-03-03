@@ -144,9 +144,33 @@ class HarrisProbateScraper:
             await self.page.screenshot(path=OUTPUT_DIR / "debug_search.png")
             raise
             
-        # Parse results
-        cases = await self._parse_search_results()
-        return cases
+        # Parse results with pagination
+        all_cases = []
+        page_num = 1
+        
+        while True:
+            cases = await self._parse_search_results()
+            all_cases.extend(cases)
+            
+            # Check for next page link
+            next_link = self.page.locator('a:has-text("Next")')
+            has_next = await next_link.count() > 0
+            
+            if has_next:
+                try:
+                    page_num += 1
+                    print(f"Fetching page {page_num}...")
+                    await next_link.first.click()
+                    await self.page.wait_for_load_state("networkidle")
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    print(f"No more pages or pagination error: {e}")
+                    break
+            else:
+                break
+                
+        print(f"Found {len(all_cases)} probate cases")
+        return all_cases
         
     async def _parse_search_results(self) -> list[ProbateCase]:
         """Parse the search results page."""

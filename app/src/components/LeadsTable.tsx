@@ -24,6 +24,12 @@ function getTotalValue(properties: Property[]): number {
   return properties.reduce((sum, p) => sum + (p.market_value || 0), 0)
 }
 
+function parseDate(dateStr: string): number {
+  // Parse MM/DD/YYYY to timestamp for proper sorting
+  const [month, day, year] = dateStr.split('/')
+  return new Date(`${year}-${month}-${day}`).getTime() || 0
+}
+
 export default function LeadsTable({ leads }: LeadsTableProps) {
   const [sortField, setSortField] = useState<SortField>('best_match_score')
   const [sortDir, setSortDir] = useState<SortDir>('desc')
@@ -53,8 +59,8 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
           bVal = b.decedent_name
           break
         case 'file_date':
-          aVal = a.file_date
-          bVal = b.file_date
+          aVal = parseDate(a.file_date)
+          bVal = parseDate(b.file_date)
           break
         case 'match_count':
           aVal = a.match_count
