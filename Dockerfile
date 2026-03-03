@@ -34,6 +34,9 @@ RUN mkdir -p /app/scripts/output
 
 WORKDIR /app/app
 
+# Build for production
+RUN npm run build
+
 # Expose port
 EXPOSE 3000
 
@@ -41,5 +44,5 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PYTHONUNBUFFERED=1
 
-# Start the app
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Start the production server
+CMD ["npm", "run", "start"]
