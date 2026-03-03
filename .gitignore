@@ -26,6 +26,9 @@ env/
 
 # Output
 scripts/output/
+
+# HCAD bulk data (large files)
+scripts/data/
 *.json
 !package.json
 !tsconfig.json

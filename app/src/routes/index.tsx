@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { runMatcher, getExistingLeads, type Lead } from '#/server/matcher'
+import { useState, useEffect, useCallback } from 'react'
+import { getExistingLeads, type Lead } from '#/server/matcher'
 import ProgressLog from '#/components/ProgressLog'
 import LeadsTable from '#/components/LeadsTable'
 
@@ -27,27 +27,42 @@ function App() {
       })
   }, [])
 
-  const handleRun = async () => {
+  const handleRun = useCallback(() => {
     setIsRunning(true)
-    setLogs(['Starting...'])
+    setLogs([])
     setError(null)
+    setLeads([])
 
-    try {
-      const result = await runMatcher({ data: { days: daysBack } })
-      
-      setLogs(result.logs)
-      
-      if (result.success) {
-        setLeads(result.leads)
-      } else {
-        setError(result.error || 'Unknown error occurred')
+    const eventSource = new EventSource(`/api/stream?days=${daysBack}`)
+    
+    eventSource.addEventListener('log', (e) => {
+      const data = JSON.parse(e.data)
+      setLogs(prev => [...prev, data.message])
+    })
+    
+    eventSource.addEventListener('result', (e) => {
+      const data = JSON.parse(e.data)
+      setLeads(data.leads)
+    })
+    
+    eventSource.addEventListener('error', (e) => {
+      if (e.data) {
+        const data = JSON.parse(e.data)
+        setError(data.message)
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error')
-    } finally {
+    })
+    
+    eventSource.addEventListener('done', () => {
+      eventSource.close()
       setIsRunning(false)
+    })
+    
+    eventSource.onerror = () => {
+      eventSource.close()
+      setIsRunning(false)
+      setError('Connection lost')
     }
-  }
+  }, [daysBack])
 
   return (
     <main className="page-wrap px-4 pb-8 pt-8">
