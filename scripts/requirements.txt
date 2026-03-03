@@ -1,0 +1,26 @@
+# Estate Escape - Scraper Dependencies
+
+# Web scraping
+playwright==1.41.0
+beautifulsoup4==4.12.3
+lxml==5.1.0
+
+# HTTP requests
+httpx==0.26.0
+requests==2.31.0
+
+# Data processing
+pandas==2.2.0
+rapidfuzz==3.6.1  # Fuzzy name matching
+
+# Database
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.25
+
+# Utilities
+python-dotenv==1.0.1
+tenacity==8.2.3  # Retry logic
+tqdm==4.66.1  # Progress bars
+
+# Date handling
+python-dateutil==2.8.2

@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+env/
+.eggs/
+*.egg-info/
+*.egg
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+*.local
+
+# Output
+scripts/output/
+*.json
+!package.json
+!tsconfig.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node (frontend)
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# CDK
+cdk.out/
+*.js.map
+*.d.ts
+
+# Test
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Debug
+debug_*.png
