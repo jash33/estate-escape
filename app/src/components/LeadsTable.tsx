@@ -118,6 +118,17 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
     return <span className="ml-1">{sortDir === 'desc' ? '↓' : '↑'}</span>
   }
 
+  const InfoIcon = ({ tooltip }: { tooltip: string }) => (
+    <span 
+      className="ml-1 inline-flex cursor-help text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+      title={tooltip}
+    >
+      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </span>
+  )
+
   const leadsWithMatches = leads.filter(l => l.match_count > 0).length
   const totalValue = leads.reduce((sum, l) => sum + getTotalValue(l.properties), 0)
 
@@ -171,11 +182,9 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               >
                 Filed <SortIcon field="file_date" />
               </th>
-              <th 
-                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
-                title="Type of probate case (e.g., Independent Administration, Guardianship)"
-              >
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Type
+                <InfoIcon tooltip="Type of probate case (e.g., Independent Administration, Guardianship)" />
               </th>
               <th 
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
@@ -192,15 +201,14 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               <th 
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
                 onClick={() => handleSort('best_match_score')}
-                title="Fuzzy name match score: 100% = exact match, 85%+ = likely match"
               >
-                Match % <SortIcon field="best_match_score" />
+                Match %
+                <InfoIcon tooltip="Fuzzy name match score: 100% = exact match, 85%+ = likely match" />
+                <SortIcon field="best_match_score" />
               </th>
-              <th 
-                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
-                title="Court case status: Open = active, Closed = resolved, Pending = awaiting action"
-              >
+              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
                 Status
+                <InfoIcon tooltip="Court case status: Open = active, Closed = resolved, Pending = awaiting action" />
               </th>
             </tr>
           </thead>
@@ -328,16 +336,16 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       {/* Pagination */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--line)] px-6 py-4">
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-[var(--sea-ink-soft)]">
             Showing {page * pageSize + 1} to {Math.min((page + 1) * pageSize, sortedLeads.length)} of {sortedLeads.length}
           </span>
           <div className="flex items-center gap-2">
-            <label htmlFor="pageSize" className="text-sm text-gray-700">Per page:</label>
+            <label htmlFor="pageSize" className="text-sm text-[var(--sea-ink-soft)]">Per page:</label>
             <select
               id="pageSize"
               value={pageSize}
               onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-              className="rounded-lg border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)]"
+              className="rounded-lg border border-[var(--line)] bg-[var(--surface)] px-2 py-1 text-sm text-[var(--sea-ink)] focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)]"
             >
               {PAGE_SIZE_OPTIONS.map(size => (
                 <option key={size} value={size}>{size}</option>
@@ -349,17 +357,17 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
+            className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-medium text-[var(--sea-ink-soft)] disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--chip-bg)]"
           >
             Previous
           </button>
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-[var(--sea-ink-soft)]">
             Page {page + 1} of {totalPages || 1}
           </span>
           <button
             onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
             disabled={page >= totalPages - 1}
-            className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-gray-50"
+            className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-medium text-[var(--sea-ink-soft)] disabled:cursor-not-allowed disabled:opacity-50 hover:bg-[var(--chip-bg)]"
           >
             Next
           </button>
