@@ -11,7 +11,7 @@ function App() {
   const [logs, setLogs] = useState<string[]>([])
   const [leads, setLeads] = useState<Lead[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [daysBack, setDaysBack] = useState(7)
+  const [daysBack, setDaysBack] = useState('7')
 
   // Load existing leads on mount
   useEffect(() => {
@@ -33,7 +33,8 @@ function App() {
     setError(null)
     setLeads([])
 
-    const eventSource = new EventSource(`/api/stream?days=${daysBack}`)
+    const days = parseInt(daysBack, 10) || 7
+    const eventSource = new EventSource(`/api/stream?days=${days}`)
     
     eventSource.addEventListener('log', (e) => {
       const data = JSON.parse(e.data)
@@ -92,8 +93,9 @@ function App() {
                 min={1}
                 max={90}
                 value={daysBack}
-                onChange={(e) => setDaysBack(Number(e.target.value))}
+                onChange={(e) => setDaysBack(e.target.value)}
                 disabled={isRunning}
+                placeholder="7"
                 className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
               />
             </div>
