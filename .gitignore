@@ -32,6 +32,8 @@ scripts/data/
 *.json
 !package.json
 !tsconfig.json
+!app/package-lock.json
+!**/package-lock.json
 
 # Logs
 *.log

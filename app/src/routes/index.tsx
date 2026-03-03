@@ -51,6 +51,7 @@ function App() {
     eventSource.addEventListener("error", (e) => {
       // @ts-ignore
       if (e.data) {
+        // @ts-ignore
         const data = JSON.parse(e.data);
         setError(data.message);
       }
@@ -87,10 +88,7 @@ function App() {
 
           <div className="flex flex-wrap items-start gap-4">
             <div className="flex flex-col gap-1">
-              <span className="text-xs text-[var(--sea-ink-soft)]">
-                Scan may take 1-2 minutes
-              </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mt-1">
                 <label
                   htmlFor="days"
                   className="text-sm font-medium text-[var(--sea-ink)]"
@@ -169,7 +167,11 @@ function App() {
             </button>
           </div>
         </div>
-
+        <div className="flex justify-end pr-7">
+          <span className="text-xs text-[var(--sea-ink-soft)]">
+            Scan may take a few minutes.
+          </span>
+        </div>
         {leads.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-4 text-sm">
             <div className="rounded-full bg-green-100 px-4 py-1.5 font-medium text-green-800">
