@@ -117,12 +117,13 @@ class HarrisProbateScraper:
         """
         await self.navigate_to_search()
         
-        # Click on the date search tab/section
-        # The form has File Date (From) and File Date (To) fields
+        # ASP.NET field names for the case search form
+        # txtFrom/txtTo are the file date fields, btnSearchCase is the submit button
         try:
-            # Fill in date fields
-            from_input = self.page.locator('input[name*="FileDateFrom"]').first
-            to_input = self.page.locator('input[name*="FileDateTo"]').first
+            # Fill in date fields using ASP.NET control names
+            from_input = self.page.locator('#ctl00_ContentPlaceHolder1_txtFrom')
+            to_input = self.page.locator('#ctl00_ContentPlaceHolder1_txtTo')
+            search_btn = self.page.locator('#ctl00_ContentPlaceHolder1_btnSearchCase')
             
             # Clear and fill
             await from_input.fill(from_date)
@@ -131,7 +132,6 @@ class HarrisProbateScraper:
             print(f"Searching cases from {from_date} to {to_date}")
             
             # Submit the search
-            search_btn = self.page.locator('input[type="submit"][value*="Search"], button:has-text("Search")').first
             await search_btn.click()
             
             # Wait for results
@@ -140,7 +140,7 @@ class HarrisProbateScraper:
             
         except Exception as e:
             print(f"Error during search: {e}")
-            # Try alternative approach - look for any submit button
+            # Save screenshot for debugging
             await self.page.screenshot(path=OUTPUT_DIR / "debug_search.png")
             raise
             
@@ -155,52 +155,86 @@ class HarrisProbateScraper:
         html = await self.page.content()
         soup = BeautifulSoup(html, 'lxml')
         
-        # Find the results table
-        # Typically has columns: Case Number, Court, Status, File Date, etc.
-        results_table = soup.find('table', {'id': re.compile(r'.*Grid.*|.*Results.*', re.I)})
+        # Check for record count
+        record_match = re.search(r'(\d+)\s*Record\(s\)\s*Found', html)
+        if record_match:
+            print(f"Server reports: {record_match.group(1)} records found")
         
-        if not results_table:
-            # Try finding any table with case data
-            tables = soup.find_all('table')
-            for table in tables:
-                if table.find('a', href=re.compile(r'CaseDetail')):
-                    results_table = table
-                    break
-                    
+        # Find all tables - the results table is the one with the most rows
+        # and contains headers like "Case", "Court", "File Date"
+        tables = soup.find_all('table')
+        
+        results_table = None
+        max_rows = 0
+        for table in tables:
+            rows = table.find_all('tr')
+            text = table.get_text()
+            # Look for table with many rows and case-related headers
+            if len(rows) > max_rows and 'Case' in text and 'Court' in text and 'File Date' in text:
+                results_table = table
+                max_rows = len(rows)
+                
         if not results_table:
             print("No results table found")
             await self.page.screenshot(path=OUTPUT_DIR / "debug_no_results.png")
             return cases
             
-        rows = results_table.find_all('tr')[1:]  # Skip header row
-        print(f"Found {len(rows)} case rows")
+        rows = results_table.find_all('tr')
         
+        # Find header row to understand column positions
+        header_row = None
+        data_rows = []
         for row in rows:
+            cells = row.find_all(['th', 'td'])
+            cell_text = [c.get_text(strip=True) for c in cells]
+            if 'Case' in cell_text and 'Court' in cell_text:
+                header_row = cell_text
+            elif len(cells) >= 5:
+                data_rows.append(row)
+        
+        print(f"Found {len(data_rows)} data rows")
+        
+        for row in data_rows:
             cells = row.find_all('td')
-            if len(cells) < 4:
+            if len(cells) < 5:
+                continue
+            
+            cell_values = [c.get_text(strip=True) for c in cells]
+            
+            # Expected format based on inspection:
+            # [0] Events (icon/link), [1] Case#, [2] Court, [3] File Date, 
+            # [4] Status, [5] Type Desc, [6] Subtype, [7] Style, [8] Parties
+            
+            # Find the case number (6 digit number or W+6 digits for wills)
+            case_number = ""
+            case_idx = -1
+            for i, val in enumerate(cell_values):
+                if re.match(r'^[W]?\d{6}$', val):
+                    case_number = val
+                    case_idx = i
+                    break
+                    
+            if not case_number:
                 continue
                 
-            # Extract case link and ID
-            case_link = row.find('a', href=re.compile(r'CaseDetail'))
-            if not case_link:
-                continue
-                
-            case_number = case_link.get_text(strip=True)
-            href = case_link.get('href', '')
+            # Extract decedent name from Style column
+            # Format: "IN THE ESTATE OF: JOHN DOE, DECEASED" or similar
+            style = cell_values[case_idx + 6] if len(cell_values) > case_idx + 6 else ""
+            decedent_name = None
             
-            # Extract case ID from URL
-            case_id_match = re.search(r'CaseID=(\d+)', href)
-            case_id = case_id_match.group(1) if case_id_match else ""
+            name_match = re.search(r'(?:ESTATE OF|GUARDIANSHIP OF)[:\s]+([^,]+)', style, re.I)
+            if name_match:
+                decedent_name = name_match.group(1).strip()
             
-            # Parse other fields (order may vary)
             try:
                 case = ProbateCase(
                     case_number=case_number,
-                    case_id=case_id,
-                    court=cells[1].get_text(strip=True) if len(cells) > 1 else "",
-                    file_date=cells[2].get_text(strip=True) if len(cells) > 2 else "",
-                    status=cells[3].get_text(strip=True) if len(cells) > 3 else "",
-                    case_type=cells[4].get_text(strip=True) if len(cells) > 4 else "",
+                    case_id=case_number,  # Will fetch actual ID from detail page if needed
+                    court=cell_values[case_idx + 1] if len(cell_values) > case_idx + 1 else "",
+                    file_date=cell_values[case_idx + 2] if len(cell_values) > case_idx + 2 else "",
+                    status=cell_values[case_idx + 3] if len(cell_values) > case_idx + 3 else "",
+                    case_type=cell_values[case_idx + 4] if len(cell_values) > case_idx + 4 else "",
+                    decedent_name=decedent_name,
                 )
                 cases.append(case)
             except Exception as e:
