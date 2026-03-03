@@ -127,8 +127,8 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
       <div className="border-b border-[var(--line)] px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[#1e3a3a]">Lead Results</h2>
-            <div className="mt-1 flex items-center gap-4 text-sm text-[#3d5a5a]">
+            <h2 className="text-lg font-semibold text-[var(--sea-ink)]">Lead Results</h2>
+            <div className="mt-1 flex items-center gap-4 text-sm text-[var(--sea-ink-soft)]">
               <span>{leadsWithMatches} leads with properties</span>
               <span>•</span>
               <span>Total estimated value: {formatCurrency(totalValue)}</span>
