@@ -76,7 +76,7 @@ function App() {
         <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
         <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
 
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <div>
             <h1 className="display-title mb-2 text-3xl font-bold tracking-tight text-[var(--sea-ink)] sm:text-4xl">
               🏠 Estate Escape
@@ -86,7 +86,7 @@ function App() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <div className="flex items-center gap-2">
               <label
                 htmlFor="days"
@@ -165,13 +165,13 @@ function App() {
             </button>
           </div>
         </div>
-        <div className="flex justify-end pr-7">
+        <div className="flex justify-center sm:justify-end sm:pr-7">
           <span className="text-xs text-[var(--sea-ink-soft)]">
             Scan may take a few minutes.
           </span>
         </div>
         {leads.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-4 text-sm">
+          <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm sm:justify-start">
             <div className="rounded-full bg-green-100 px-4 py-1.5 font-medium text-green-800">
               {leads.filter((l) => l.match_count > 0).length} leads with
               properties
