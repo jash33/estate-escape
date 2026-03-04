@@ -86,26 +86,24 @@ function App() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-start gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2 mt-1">
-                <label
-                  htmlFor="days"
-                  className="text-sm font-medium text-[var(--sea-ink)]"
-                >
-                  Days to scan:
-                </label>
-                <input
-                  type="number"
-                  id="days"
-                  min={1}
-                  max={90}
-                  value={daysBack}
-                  onChange={(e) => setDaysBack(e.target.value)}
-                  disabled={isRunning}
-                  className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
-                />
-              </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="days"
+                className="text-sm font-medium text-[var(--sea-ink)]"
+              >
+                Days to scan:
+              </label>
+              <input
+                type="number"
+                id="days"
+                min={1}
+                max={90}
+                value={daysBack}
+                onChange={(e) => setDaysBack(e.target.value)}
+                disabled={isRunning}
+                className="w-20 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[var(--lagoon)] focus:outline-none focus:ring-1 focus:ring-[var(--lagoon)] disabled:opacity-50"
+              />
             </div>
 
             <button
