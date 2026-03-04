@@ -43,6 +43,10 @@ EXPOSE 3000
 # Set environment
 ENV NODE_ENV=production
 ENV PYTHONUNBUFFERED=1
+ENV HOST=0.0.0.0
+ENV PORT=3000
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
 
-# build the production server!
+# Start the production server
 CMD ["npm", "run", "start"]
