@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { spawn } from 'child_process'
 import { join } from 'path'
-import { readdir, readFile } from 'fs/promises'
+import { readdir, readFile, unlink } from 'fs/promises'
 
 // Path to scripts directory (relative to app/)
 const SCRIPTS_DIR = join(process.cwd(), '..', 'scripts')
@@ -125,5 +125,25 @@ export const getExistingLeads = createServerFn({ method: 'GET' })
       return { leads: [], file: null }
     } catch {
       return { leads: [], file: null }
+    }
+  })
+
+/**
+ * Clear all saved lead files
+ */
+export const clearLeads = createServerFn({ method: 'POST' })
+  .handler(async (): Promise<{ success: boolean, deleted: number }> => {
+    try {
+      const outputDir = join(SCRIPTS_DIR, 'output')
+      const files = await readdir(outputDir)
+      const leadFiles = files.filter(f => f.startsWith('leads_') && f.endsWith('.json'))
+      
+      for (const file of leadFiles) {
+        await unlink(join(outputDir, file))
+      }
+      
+      return { success: true, deleted: leadFiles.length }
+    } catch {
+      return { success: false, deleted: 0 }
     }
   })

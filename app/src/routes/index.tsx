@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
-import { getExistingLeads, type Lead } from "#/server/matcher";
+import { getExistingLeads, clearLeads, type Lead } from "#/server/matcher";
 import ProgressLog from "#/components/ProgressLog";
 import LeadsTable from "#/components/LeadsTable";
 
@@ -68,6 +68,14 @@ function App() {
       setError("Connection lost");
     };
   }, [daysBack]);
+
+  const handleClear = useCallback(async () => {
+    if (!confirm("Clear all saved results?")) return;
+    await clearLeads();
+    setLeads([]);
+    setLogs([]);
+    setError(null);
+  }, []);
 
   return (
     <main className="page-wrap px-4 pb-8 pt-8">
@@ -171,7 +179,7 @@ function App() {
           </span>
         </div>
         {leads.length > 0 && (
-          <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm sm:justify-start">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm sm:justify-start">
             <div className="rounded-full bg-green-100 px-4 py-1.5 font-medium text-green-800">
               {leads.filter((l) => l.match_count > 0).length} leads with
               properties
@@ -179,6 +187,13 @@ function App() {
             <div className="rounded-full bg-blue-100 px-4 py-1.5 font-medium text-blue-800">
               {leads.length} total cases
             </div>
+            <button
+              onClick={handleClear}
+              disabled={isRunning}
+              className="rounded-full border border-red-300 px-4 py-1.5 font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+            >
+              Clear Results
+            </button>
           </div>
         )}
 
