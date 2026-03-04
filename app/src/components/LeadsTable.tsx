@@ -37,16 +37,52 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(20)
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set())
+  const [showTypeFilter, setShowTypeFilter] = useState(false)
+
+  // Get unique case types from all leads
+  const caseTypes = useMemo(() => {
+    const types = new Set<string>()
+    leads.forEach(l => types.add(l.case_type))
+    return Array.from(types).sort()
+  }, [leads])
 
   const filteredLeads = useMemo(() => {
-    if (!searchQuery.trim()) return leads
-    const q = searchQuery.toLowerCase()
-    return leads.filter(l => 
-      l.decedent_name.toLowerCase().includes(q) ||
-      l.case_number.includes(q) ||
-      l.case_type.toLowerCase().includes(q)
-    )
-  }, [leads, searchQuery])
+    let filtered = leads
+    
+    // Filter by selected types
+    if (selectedTypes.size > 0) {
+      filtered = filtered.filter(l => selectedTypes.has(l.case_type))
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      filtered = filtered.filter(l => 
+        l.decedent_name.toLowerCase().includes(q) ||
+        l.case_number.includes(q) ||
+        l.case_type.toLowerCase().includes(q)
+      )
+    }
+    
+    return filtered
+  }, [leads, searchQuery, selectedTypes])
+
+  const toggleType = (type: string) => {
+    const newTypes = new Set(selectedTypes)
+    if (newTypes.has(type)) {
+      newTypes.delete(type)
+    } else {
+      newTypes.add(type)
+    }
+    setSelectedTypes(newTypes)
+    setPage(0)
+  }
+
+  const clearTypeFilter = () => {
+    setSelectedTypes(new Set())
+    setPage(0)
+  }
 
   const sortedLeads = useMemo(() => {
     return [...filteredLeads].sort((a, b) => {
@@ -195,9 +231,49 @@ export default function LeadsTable({ leads }: LeadsTableProps) {
               >
                 Filed <SortIcon field="file_date" />
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
-                Type
-                <InfoIcon tooltip="Type of probate case (e.g., Independent Administration, Guardianship)" />
+              <th className="relative px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700">
+                <button 
+                  onClick={() => setShowTypeFilter(!showTypeFilter)}
+                  className="inline-flex items-center gap-1 hover:text-gray-900"
+                >
+                  Type
+                  {selectedTypes.size > 0 && (
+                    <span className="ml-1 rounded-full bg-[var(--lagoon)] px-1.5 text-[10px] text-white">
+                      {selectedTypes.size}
+                    </span>
+                  )}
+                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {showTypeFilter && (
+                  <div className="absolute left-0 top-full z-50 mt-1 w-72 rounded-lg border border-gray-200 bg-white p-3 shadow-xl">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-600">Filter by type</span>
+                      {selectedTypes.size > 0 && (
+                        <button 
+                          onClick={clearTypeFilter}
+                          className="text-xs text-[var(--lagoon)] hover:underline"
+                        >
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-48 space-y-1 overflow-y-auto">
+                      {caseTypes.map(type => (
+                        <label key={type} className="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-gray-50">
+                          <input
+                            type="checkbox"
+                            checked={selectedTypes.has(type)}
+                            onChange={() => toggleType(type)}
+                            className="h-4 w-4 rounded border-gray-300 text-[var(--lagoon)] focus:ring-[var(--lagoon)]"
+                          />
+                          <span className="text-xs text-gray-700">{type}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </th>
               <th 
                 className="cursor-pointer px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-700 hover:text-gray-900"
